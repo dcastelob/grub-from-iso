@@ -1,0 +1,54 @@
+# Configuracoes for grub-from-iso
+
+# Ativar ou desativar a entrada
+GRUB_ISO_ENABLED="true"
+
+# Identificacao da ISO
+GRUB_ISO_TITLE="Damn Small Linux - Rescue"
+
+#GRUB_ISO_PATH="/var/iso/image.iso"
+GRUB_ISO_PATH="/var/iso/dsl-rescue.iso"
+
+# Kernel e initrd dentro da ISO
+#GRUB_ISO_KERNEL="/casper/vmlinuz"
+#GRUB_ISO_INITRD="/casper/initrd"
+GRUB_ISO_KERNEL="/antiX/vmlinuz"
+GRUB_ISO_INITRD="/antiX/initrd.gz"
+
+# Parametros adicionais do kernel
+#GRUB_ISO_KERNEL_PARAMS="boot=casper iso-scan/filename=${GRUB_ISO_PATH} quiet splash"
+GRUB_ISO_KERNEL_PARAMS="fromiso=\${isofile} buuid=\${ISO_UUID} quiet splasht disable=lxF"
+
+# Comportamento do GRUB
+GRUB_ISO_SEARCH="uuid"
+
+# Opcional: UUID explicito da particao que contem a ISO
+GRUB_ISO_UUID=""
+
+# Configuracoes adicionais
+GRUB_ISO_LOOPBACK="true"
+
+
+#### Definindo as imagens e titulo
+#GRUB_ISO_PATH="/opt/iso/debian-live.iso"
+#GRUB_ISO_TITLE="Debian Live"
+
+## Exemplo DSL (Damn Small Linux)
+#GRUB_ISO_KERNEL="/antiX/vmlinuz"
+#GRUB_ISO_INITRD="/antiX/initrd.gz"
+#GRUB_ISO_KERNEL_PARAMS="fromiso=\${isofile} buuid=\${ISO_UUID} quiet splasht disable=lxF"
+
+## Exemplo Ubuntu/Mint
+#GRUB_ISO_KERNEL="/casper/vmlinuz"
+#GRUB_ISO_INITRD="/casper/initrd"
+#GRUB_ISO_KERNEL_PARAMS="boot=casper iso-scan/filename=${GRUB_ISO_PATH} quiet splash"
+
+## Exemplo Debian
+#GRUB_ISO_KERNEL="/live/vmlinuz"
+#GRUB_ISO_INITRD="/live/initrd.img"
+#GRUB_ISO_KERNEL_PARAMS="boot=live components findiso=${GRUB_ISO_PATH}"
+
+## Exemplo Fedora
+#GRUB_ISO_KERNEL="/images/pxeboot/vmlinuz"
+#GRUB_ISO_INITRD="/images/pxeboot/initrd.img"
+#GRUB_ISO_KERNEL_PARAMS="root=live:CDLABEL=Fedora-Live rd.live.image"

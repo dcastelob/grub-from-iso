@@ -1,0 +1,2 @@
+gostaria de fazer um script para criar uma entrada no grub.cfg e que ele ficasse presente no /etc/grub.d. Ele deve ler configurações em /etc/default/grub-from-iso, contendo a variável GRUB_ISO_PATH=/opt/iso/image.iso.
+Tambem gostaria que ele fizesse include do conteudo gerado no grub.cfg e o conteudo gerado fosse salvo em /boot/grub/grub-from-iso.conf.

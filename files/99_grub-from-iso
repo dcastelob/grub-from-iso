@@ -1,0 +1,99 @@
+
+#!/bin/sh
+
+CONFIG="/etc/default/grub-from-iso"
+OUTPUT="/boot/grub/grub-from-iso.conf"
+OUTPUT_TMP="${OUTPUT}.tmp"
+
+# Verifica configuracao
+[ -f "$CONFIG" ] || exit 0
+
+# shellcheck disable=SC1090
+. "$CONFIG"
+
+# Verifica se esta habilitado
+[ "$GRUB_ISO_ENABLED" = "true" ] || exit 0
+
+# Validacoes basicas
+if [ -z "$GRUB_ISO_PATH" ] || [ ! -f "$GRUB_ISO_PATH" ]; then
+    echo "grub-from-iso: ISO invalida ou inexistente" >&2
+    exit 1
+fi
+
+if [ -z "$GRUB_ISO_KERNEL" ] || [ -z "$GRUB_ISO_INITRD" ]; then
+    echo "grub-from-iso: kernel e initrd sao obrigatorios" >&2
+    exit 1
+fi
+
+# Identifica particao
+#ISO_DEVICE=$(findmnt -no SOURCE -T "$GRUB_ISO_PATH")
+ISO_DEVICE=$(findmnt -no SOURCE -T "$GRUB_ISO_PATH" | tr -d "[@]" | sed "s@\/\$@@g")
+ISO_MOUNT=$(findmnt -no TARGET -T "$GRUB_ISO_PATH")
+
+if [ -z "$ISO_DEVICE" ] || [ -z "$ISO_MOUNT" ]; then
+    echo "grub-from-iso: nao foi possivel identificar a particao" >&2
+    exit 1
+fi
+
+# Obtém UUID
+if [ -n "$GRUB_ISO_UUID" ]; then
+    export ISO_UUID="$GRUB_ISO_UUID"
+else
+    export ISO_UUID=$(blkid -s UUID -o value "$ISO_DEVICE")
+fi
+
+if [ -z "$ISO_UUID" ]; then
+    echo "grub-from-iso: UUID nao encontrado" >&2
+    exit 1
+fi
+
+# Caminho relativo a raiz da particao
+ISO_RELATIVE_PATH=$(realpath --relative-to="$ISO_MOUNT" "$GRUB_ISO_PATH")
+
+# Escapa espacos no caminho para o GRUB
+ISO_RELATIVE_PATH=$(printf '%s' "$ISO_RELATIVE_PATH" | sed 's/ /\\ /g')
+
+## Incluindo o valor da variável coletada no script atual ${ISO_UUID}
+GRUB_ISO_KERNEL_PARAMS=$(echo "$GRUB_ISO_KERNEL_PARAMS" | envsubst '${ISO_UUID}')
+
+# Gera configuracao temporaria
+{
+    printf 'menuentry "%s" {\n' "$GRUB_ISO_TITLE"
+
+    printf '    search --no-floppy --fs-uuid --set=root %s\n' "$ISO_UUID"
+
+    printf '    set isofile="/%s"\n' "$ISO_RELATIVE_PATH"
+
+    if [ "$GRUB_ISO_LOOPBACK" = "true" ]; then
+        printf '    loopback loop0 ($root)$isofile\n'
+        printf '    linux (loop0)%s %s\n' \
+            "$GRUB_ISO_KERNEL" "$GRUB_ISO_KERNEL_PARAMS"
+        printf '    initrd (loop0)%s\n' "$GRUB_ISO_INITRD"
+    else
+        printf '    linux %s %s\n' \
+            "$GRUB_ISO_KERNEL" "$GRUB_ISO_KERNEL_PARAMS"
+        printf '    initrd %s\n' "$GRUB_ISO_INITRD"
+    fi
+
+    printf '}\n'
+
+} > "$OUTPUT_TMP"
+
+# Atualiza arquivo somente apos geracao completa
+chmod 644 "$OUTPUT_TMP"
+mv "$OUTPUT_TMP" "$OUTPUT"
+
+# Inclui arquivo externo no grub.cfg
+#printf 'source %s\n' "$OUTPUT"
+
+echo "
+if [ ! -e \"\${prefix}/grub-from-iso.conf\" ]; then
+echo ""
+else
+submenu 'Boot from iso...' {
+    configfile \"\${prefix}/grub-from-iso.conf\"
+}
+fi
+"
+
+exit 0
