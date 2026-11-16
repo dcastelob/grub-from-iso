@@ -3,8 +3,8 @@
 #
 # ==============================================================================
 # Script      : 99_grub-from-iso
-# Description : Script construtor de dentrada "boot from iso"
-#               nos arquivos grub.cfg e grub-from-iso.cfg
+# Description : Script construtor de entrada no grub "boot from iso"
+#               Editando os arquivos "grub.cfg" e "grub-from-iso.cfg"
 # Version     : 1.0.0
 # Author      : Diego Castelo Branco
 # Created     : 2026-11-09
