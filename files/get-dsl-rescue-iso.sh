@@ -1,5 +1,15 @@
 #!/bin/bash
-# Script para download de imamge leve pra rescue de ambiente
+#
+# ==============================================================================
+# Script      : get-dsl-rescue-iso.sh
+# Description : Script para download de imamge leve pra rescue de ambiente
+# Version     : 1.0.0
+# Author      : Diego Castelo Branco
+# Created     : 2026-11-09
+# Updated     : 2026-11-09
+# License     : MIT
+# ==============================================================================
+
 
 # Obtendo variáveis importantes
 source /etc/default/grub-from-iso
