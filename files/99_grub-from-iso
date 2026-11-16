@@ -1,8 +1,21 @@
 
 #!/bin/sh
+#
+# ==============================================================================
+# Script      : 99_grub-from-iso
+# Description : Script construtor de dentrada "boot from iso"
+#               nos arquivos grub.cfg e grub-from-iso.cfg
+# Version     : 1.0.0
+# Author      : Diego Castelo Branco
+# Created     : 2026-11-09
+# Updated     : 2026-11-09
+# License     : MIT
+# ==============================================================================
+
 
 CONFIG="/etc/default/grub-from-iso"
-OUTPUT="/boot/grub/grub-from-iso.conf"
+OUTPUT="/boot/grub/grub-from-iso.cfg"
+OUTPUT_FILE=$(basename $OUTPUT)
 OUTPUT_TMP="${OUTPUT}.tmp"
 
 # Verifica configuracao
@@ -91,7 +104,7 @@ if [ ! -e \"\${prefix}/grub-from-iso.conf\" ]; then
 echo ""
 else
 submenu 'Boot from iso...' {
-    configfile \"\${prefix}/grub-from-iso.conf\"
+    configfile \"\${prefix}/${OUTPUT_FILE}\"
 }
 fi
 "
