@@ -1,7 +1,7 @@
 PKGNAME ?= grub-from-iso
 DESTDIR ?=
 
-.PHONY: install uninstall get-dsl
+.PHONY: install uninstall purge get-dsl
 
 install:
 	@install -Dm755 -t "$(DESTDIR)/etc/grub.d/" 		files/99_grub-from-iso
@@ -20,6 +20,11 @@ uninstall:
 
 	cp -pv /boot/grub/grub.cfg /boot/grub/grub.cfg_$$(date "+%Y%m%d_%H%M%S")
 	update-grub || grub-mkconfig -o /boot/grub/grub.cfg
+
+purge:
+	@$(MAKE) uninstall
+
+	rm -f $(DESTDIR)/boot/grub/grub-from-iso.cfg
 
 get-dsl:
 	/usr/local/bin/get-dsl-rescue-iso.sh;
